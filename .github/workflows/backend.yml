@@ -57,7 +57,7 @@ jobs:
         run: vendor/bin/pint --test
 
       - name: PHPStan (static analysis)
-        run: vendor/bin/phpstan analyse --no-progress
+        run: vendor/bin/phpstan analyse --no-progress --memory-limit=1G
 
       - name: Tests (SQLite in-memory)
         run: php artisan test
