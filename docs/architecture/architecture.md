@@ -94,7 +94,7 @@
 
 CI/CD 用 **GitHub Actions 即可，不需要 Jenkins 等额外 CI 工具**：
 
-1. **CI（PR/推送）**：后端 Pint / PHPStan / PHPUnit / migrate+seed / OpenAPI diff；前端 ESLint / Prettier / tsc / build。
+1. **CI（PR/推送）**：后端 Pint / PHPStan / PHPUnit / migrate+seed / OpenAPI diff；前端 Biome / tsc / build。
 2. **构建镜像**：Octane 应用镜像、nginx+admin-web 静态镜像，推送到镜像仓库（阿里云 ACR 或 GHCR）。
 3. **CD（main 合入）**：`helm upgrade`（或 `kubectl apply -f`）部署到 k8s——本地 kind / 生产 ACK/TKE。
 4. **可选 GitOps**：后续要多环境灰度/自动同步再引入 Argo CD；MVP 阶段 GitHub Actions 直连部署足够，不引入 Jenkins。
@@ -126,7 +126,7 @@ CI/CD 用 **GitHub Actions 即可，不需要 Jenkins 等额外 CI 工具**：
 | API 文档 | **Scramble**（生成 OpenAPI 3.1 JSON + 服务端渲染 HTML） | CLI 导出 JSON；纯 HTML 展示，不用 Scalar/Swagger UI JS SPA |
 | 对象存储 | **S3 兼容**（阿里云 OSS / 腾讯云 COS） | 固件包、反馈图片；**本地开发用 Laravel `local` 磁盘（`storage/app`），生产切 S3** |
 | 容器/编排 | **Kubernetes 本地+生产统一**（本地 kind/k3d，生产托管 ACK/TKE，保底 k8s） | 同一套 Helm Chart；无状态入 k8s，有状态生产托管 / 本地集群内单实例 |
-| CI | **GitHub Actions** | 后端 Pint/PHPStan/PHPUnit/migrate+seed/OpenAPI diff；前端 ESLint/Prettier/tsc/build |
+| CI | **GitHub Actions** | 后端 Pint/PHPStan/PHPUnit/migrate+seed/OpenAPI diff；前端 Biome/tsc/build |
 | 埋点 | **PostHog 延后** | Phase 1 不接；先做服务端业务事件管道 |
 | 云厂商 | **TBD** | 候选阿里云 / 腾讯云，部署文档留占位 |
 

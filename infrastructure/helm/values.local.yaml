@@ -1,0 +1,42 @@
+# 本地 kind 集群覆盖（与生产同一套 Chart，只改环境差异）
+
+replicaCount: 1
+
+env:
+  APP_ENV: local
+  APP_DEBUG: "true"
+  APP_URL: http://smart-wearables.local
+  LOG_LEVEL: debug
+  FILESYSTEM_DISK: local   # 本地开发用本地磁盘，生产切 S3
+
+database:
+  host: postgres          # 集群内 Postgres 服务名
+  port: 5432
+  database: smart_wearables
+  username: app
+
+redis:
+  host: redis
+  port: 6379
+
+secrets:
+  appKey: ""              # 本地可留空，由 .env/启动时生成
+  dbPassword: password
+
+# 本地在集群内跑单实例 Postgres + Redis，保持拓扑一致
+postgres:
+  enabled: true
+  storage: 1Gi
+
+redisLocal:
+  enabled: true
+
+adminWeb:
+  replicaCount: 1
+
+autoscaling:
+  enabled: false          # 本地不自动扩缩
+
+ingress:
+  host: smart-wearables.local
+  tls: false

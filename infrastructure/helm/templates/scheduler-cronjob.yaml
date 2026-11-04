@@ -1,0 +1,22 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "sw.fullname" . }}-scheduler
+  labels: {{- include "sw.labels" . | nindent 4 }}
+spec:
+  schedule: "* * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: scheduler
+              image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+              imagePullPolicy: {{ .Values.image.pullPolicy }}
+              command: ["php", "artisan", "schedule:run"]
+              envFrom:
+                - configMapRef:
+                    name: {{ include "sw.fullname" . }}-env
+                - secretRef:
+                    name: {{ include "sw.fullname" . }}-secret
+          restartPolicy: OnFailure

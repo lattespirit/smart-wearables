@@ -1,0 +1,86 @@
+# 默认值。本地用 values.local.yaml 覆盖，生产用 values.prod.yaml 覆盖。
+
+replicaCount: 2
+
+image:
+  repository: smart-wearables/backend
+  tag: latest
+  pullPolicy: IfNotPresent
+
+# 后端环境变量（非敏感）
+env:
+  APP_ENV: production
+  APP_DEBUG: "false"
+  APP_URL: http://localhost
+  LOG_CHANNEL: stack
+  LOG_STACK: single
+  LOG_LEVEL: info
+  CACHE_STORE: redis
+  QUEUE_CONNECTION: redis
+  SESSION_DRIVER: redis
+  FILESYSTEM_DISK: s3
+
+database:
+  host: postgres
+  port: 5432
+  database: smart_wearables
+  username: app
+
+redis:
+  host: redis
+  port: 6379
+
+storage:
+  endpoint: ""       # S3 兼容 endpoint
+  bucket: ""
+  region: us-east-1
+  key: ""
+  secret: ""
+
+wechat:
+  app_id: ""
+  app_secret: ""
+  subscribe_template_id: ""
+
+secrets:
+  appKey: ""        # base64 或明文（helm stringData 自动编码）
+  dbPassword: ""
+
+# 本地集群内 Postgres（生产走托管 RDS）
+postgres:
+  enabled: false
+  image: postgres:17
+  storage: 1Gi
+
+# 本地集群内 Redis（生产走托管云 Redis）
+redisLocal:
+  enabled: false
+  image: redis:7
+
+adminWeb:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: smart-wearables/admin-web
+    tag: latest
+    pullPolicy: IfNotPresent
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 70
+
+ingress:
+  enabled: true
+  className: nginx
+  host: smart-wearables.local
+  tls: false
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 1000m
+    memory: 512Mi

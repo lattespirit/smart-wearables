@@ -1,0 +1,46 @@
+# 生产覆盖（托管 ACK/TKE + 托管 RDS/Redis/OSS）。密钥通过外部机制注入，不提交仓库。
+
+replicaCount: 2
+
+env:
+  APP_ENV: production
+  APP_DEBUG: "false"
+  APP_URL: https://your-domain.com
+  LOG_LEVEL: info
+  FILESYSTEM_DISK: s3
+
+database:
+  host: your-rds-endpoint   # 托管 RDS
+  port: 5432
+  database: smart_wearables
+  username: app
+
+redis:
+  host: your-redis-endpoint # 托管云 Redis
+  port: 6379
+
+storage:
+  endpoint: https://oss-cn-xxx.aliyuncs.com
+  bucket: your-bucket
+  region: cn-xxx
+
+wechat:
+  app_id: ""               # 生产由 secret/external-secrets 注入
+  app_secret: ""
+  subscribe_template_id: ""
+
+# 生产不启用集群内 Postgres/Redis（走托管）
+postgres:
+  enabled: false
+
+redisLocal:
+  enabled: false
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 10
+
+ingress:
+  host: your-domain.com
+  tls: true

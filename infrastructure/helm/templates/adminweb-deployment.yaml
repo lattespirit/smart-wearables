@@ -1,0 +1,23 @@
+{{- if .Values.adminWeb.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "sw.fullname" . }}-admin-web
+  labels: {{- include "sw.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.adminWeb.replicaCount }}
+  selector:
+    matchLabels:
+      app: admin-web
+  template:
+    metadata:
+      labels:
+        app: admin-web
+    spec:
+      containers:
+        - name: admin-web
+          image: "{{ .Values.adminWeb.image.repository }}:{{ .Values.adminWeb.image.tag }}"
+          imagePullPolicy: {{ .Values.adminWeb.image.pullPolicy }}
+          ports:
+            - containerPort: 80
+{{- end }}

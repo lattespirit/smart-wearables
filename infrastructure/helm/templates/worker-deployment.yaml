@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "sw.fullname" . }}-worker
+  labels: {{- include "sw.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: worker
+  template:
+    metadata:
+      labels:
+        app: worker
+    spec:
+      containers:
+        - name: worker
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["php", "artisan", "queue:work", "--sleep=3", "--tries=3"]
+          envFrom:
+            - configMapRef:
+                name: {{ include "sw.fullname" . }}-env
+            - secretRef:
+                name: {{ include "sw.fullname" . }}-secret
+          resources: {{ toYaml .Values.resources | nindent 12 }}

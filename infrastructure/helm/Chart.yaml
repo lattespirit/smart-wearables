@@ -1,0 +1,6 @@
+apiVersion: v2
+name: smart-wearables
+description: 智能穿戴设备管理平台（模块化单体，本地/生产统一 k8s）
+type: application
+version: 0.1.0
+appVersion: "0.1.0"

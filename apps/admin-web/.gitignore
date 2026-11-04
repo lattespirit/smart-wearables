@@ -1,0 +1,15 @@
+# 依赖与构建产物
+node_modules/
+dist/
+.umi/
+.umi-production/
+
+# 环境与缓存
+.env
+.env.local
+.env.*.local
+.eslintcache
+
+# 系统
+.DS_Store
+*.log

@@ -1,0 +1,8 @@
+# macOS
+.DS_Store
+
+# 本地二进制（FrankenPHP 运行时，不进仓库）
+backend/frankenphp
+
+# 临时产物
+*.log

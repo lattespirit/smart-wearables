@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "sw.fullname" . }}-env
+  labels: {{- include "sw.labels" . | nindent 4 }}
+data:
+  APP_ENV: {{ .Values.env.APP_ENV | quote }}
+  APP_DEBUG: {{ .Values.env.APP_DEBUG | quote }}
+  APP_URL: {{ .Values.env.APP_URL | quote }}
+  LOG_CHANNEL: {{ .Values.env.LOG_CHANNEL | quote }}
+  LOG_STACK: {{ .Values.env.LOG_STACK | quote }}
+  LOG_LEVEL: {{ .Values.env.LOG_LEVEL | quote }}
+  CACHE_STORE: {{ .Values.env.CACHE_STORE | quote }}
+  QUEUE_CONNECTION: {{ .Values.env.QUEUE_CONNECTION | quote }}
+  SESSION_DRIVER: {{ .Values.env.SESSION_DRIVER | quote }}
+  FILESYSTEM_DISK: {{ .Values.env.FILESYSTEM_DISK | quote }}
+  DB_CONNECTION: "pgsql"
+  DB_HOST: {{ .Values.database.host | quote }}
+  DB_PORT: {{ .Values.database.port | quote }}
+  DB_DATABASE: {{ .Values.database.database | quote }}
+  DB_USERNAME: {{ .Values.database.username | quote }}
+  REDIS_CLIENT: "phpredis"
+  REDIS_HOST: {{ .Values.redis.host | quote }}
+  REDIS_PORT: {{ .Values.redis.port | quote }}
+  AWS_DEFAULT_REGION: {{ .Values.storage.region | quote }}
+  AWS_BUCKET: {{ .Values.storage.bucket | quote }}
+  AWS_ENDPOINT: {{ .Values.storage.endpoint | quote }}
+  AWS_USE_PATH_STYLE_ENDPOINT: "true"
+  WECHAT_SUBSCRIBE_TEMPLATE_ID: {{ .Values.wechat.subscribe_template_id | quote }}
