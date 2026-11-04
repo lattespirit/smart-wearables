@@ -25,23 +25,21 @@ PHP 8.5 · Laravel 13 · Laravel Octane（FrankenPHP）· PostgreSQL · Redis ·
 
 ## 本地运行
 
+容器是主路径：FrankenPHP 内置在 `dunglas/frankenphp` 镜像里，**无需在宿主机下载 FrankenPHP 二进制**。
+
 ### 环境要求
 
-- PHP 8.5 + Composer 2
-- Node.js ≥ 20 + npm（前端使用 npm，非 pnpm）
-- Docker Desktop + kind + Helm（本地 k8s，见 [ADR-0006](docs/adr/0006-local-and-prod-unified-k8s.md)）
+- Docker Desktop + kind + Helm（容器运行）
+- PHP 8.5 + Composer 2、Node.js ≥ 20 + npm（开发后端/前端代码）
 
-### 后端（直接运行，需本地 PostgreSQL/Redis）
+### 本地 k8s（推荐，容器部署，与生产一致）
 
 ```sh
-cd backend
-composer install
-cp .env.example .env          # 已配置 pgsql + redis
-php artisan migrate:fresh --seed
-php artisan octane:start --server=frankenphp   # 需先下载 frankenphp 二进制
+kind create cluster --config infrastructure/kind/config.yaml
+helm install smart-wearables infrastructure/helm -f infrastructure/helm/values.local.yaml
 ```
 
-> 首次运行需 `php artisan octane:install --server=frankenphp`（会从 GitHub Releases 下载 FrankenPHP 二进制；若 GitHub 不通，参考下方「FrankenPHP 二进制」）。
+镜像构建：`docker build -f infrastructure/docker/backend.Dockerfile`（FrankenPHP 在镜像内）、`docker build -f infrastructure/docker/admin-web.Dockerfile`（前端静态）。
 
 ### 前端
 
@@ -52,11 +50,17 @@ npm run dev           # 本地开发（无 mock）
 npm run build         # 构建 dist/
 ```
 
-### 本地 k8s（推荐，与生产一致）
+### 可选：宿主机直跑后端（非容器，仅快速迭代）
+
+需本机 PostgreSQL/Redis + 下载 FrankenPHP 二进制（`octane:install` 默认从 GitHub Releases 下载）：
 
 ```sh
-kind create cluster --config infrastructure/kind/config.yaml
-helm install smart-wearables infrastructure/helm -f infrastructure/helm/values.local.yaml
+cd backend
+composer install
+cp .env.example .env
+php artisan octane:install --server=frankenphp   # 仅宿主机直跑需要
+php artisan migrate:fresh --seed
+php artisan octane:start --server=frankenphp
 ```
 
 ## 测试与 CI
@@ -79,17 +83,6 @@ CI（GitHub Actions）在 push / PR 时运行：`.github/workflows/backend.yml` 
 ## 部署
 
 生产部署到托管 Kubernetes（阿里云 ACK / 腾讯云 TKE），有状态服务走托管（RDS / 云 Redis / OSS）。详见 [`docs/architecture/architecture.md`](docs/architecture/architecture.md) 的「部署选型」与「部署流程」。
-
-## FrankenPHP 二进制（GitHub 不通时）
-
-`octane:install` 默认从 `github.com` 下载二进制；若该域名不通，可经 `api.github.com` 下载（此方式只需 API 与 CDN 可达）：
-
-```sh
-curl -s https://api.github.com/repos/php/frankenphp/releases/latest \
-  | jq -r '.assets[] | select(.name=="frankenphp-mac-arm64") | .url' \
-  | xargs curl -L -H "Accept: application/octet-stream" -o backend/frankenphp
-chmod +x backend/frankenphp
-```
 
 ## 常用命令
 
