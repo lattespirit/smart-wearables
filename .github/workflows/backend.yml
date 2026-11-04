@@ -48,6 +48,11 @@ jobs:
       - name: Install dependencies
         run: composer install --no-interaction --prefer-dist
 
+      - name: Prepare environment
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+
       - name: Pint (code style)
         run: vendor/bin/pint --test
 
@@ -56,6 +61,11 @@ jobs:
 
       - name: Tests (SQLite in-memory)
         run: php artisan test
+
+      - name: OpenAPI diff (Scramble)
+        run: |
+          php artisan scramble:export --path=/tmp/openapi.json
+          diff ../docs/api/admin-web/openapi.json /tmp/openapi.json
 
       - name: Migrate + Seed (fresh PostgreSQL)
         env:
